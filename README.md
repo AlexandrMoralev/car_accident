@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/AlexandrMoralev/car_accident.svg?branch=main)](https://travis-ci.com/AlexandrMoralev/car_accident)
+[![codecov](https://codecov.io/gh/AlexandrMoralev/car_accident/branch/main/graph/badge.svg?token=7I96YNDYTW)](https://codecov.io/gh/AlexandrMoralev/car_accident)
 
 ## Web приложение - автонарушители.
 Портал для регистрации дорожных проишествий.
