@@ -1,16 +1,22 @@
 package ru.job4j.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "rules", schema = "public")
-public class Rule {
+public class Rule implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
+    private Integer key;
+
+    @Column(name = "rule_id", nullable = false)
     private Integer id;
+
+    @Column(name = "name", nullable = false)
     private String name;
 
     public Rule() {

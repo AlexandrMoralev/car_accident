@@ -1,16 +1,30 @@
 package ru.job4j.model;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class AccidentType {
+@Entity
+@Table(name = "accidents_types", schema = "public")
+public class AccidentType implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false)
+    private Integer key;
+
+    @Column(name = "type_id", nullable = false)
     private Integer id;
+
+    @Column(name = "name")
     private String name;
 
     public AccidentType() {
     }
 
-    public static AccidentType of(int id, String name) {
+    public static AccidentType of(Integer id,
+                                  String name
+    ) {
         AccidentType type = new AccidentType();
         type.id = id;
         type.name = name;

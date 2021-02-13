@@ -1,8 +1,11 @@
 package ru.job4j.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.stereotype.Service;
 import ru.job4j.model.Accident;
-import ru.job4j.repository.AccidentStore;
+import ru.job4j.repository.accident.AccidentStore;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -12,7 +15,8 @@ public class AccidentServiceImpl implements AccidentService {
 
     private final AccidentStore store;
 
-    public AccidentServiceImpl(AccidentStore store) {
+    @Autowired
+    public AccidentServiceImpl(@Qualifier("accidentHibernate")AccidentStore store) {
         this.store = store;
     }
 
@@ -27,8 +31,18 @@ public class AccidentServiceImpl implements AccidentService {
     }
 
     @Override
+    public Collection<Accident> getAllAccidentsWithRules() {
+        return store.getAllAccidentsWithRules();
+    }
+
+    @Override
     public Optional<Accident> getAccident(Integer id) {
         return store.getAccident(id);
+    }
+
+    @Override
+    public Optional<Accident> getAccidentWithRules(Integer id) {
+        return store.getAccidentWithRules(id);
     }
 
 

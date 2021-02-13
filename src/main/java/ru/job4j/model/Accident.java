@@ -7,7 +7,7 @@ import java.util.*;
 import static java.util.Optional.ofNullable;
 
 @Entity
-@Table(name = "accident")
+@Table(name = "accidents", schema = "public")
 public class Accident implements Serializable {
 
     @Id
@@ -15,15 +15,24 @@ public class Accident implements Serializable {
     @Column(name = "id", unique = true, nullable = false)
     private Integer id;
 
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "text")
     private String text;
+
+    @Column(name = "address")
     private String address;
 
     @ManyToOne
+    @JoinColumn(name = "type_id")
     private AccidentType type;
 
-    @OneToMany(mappedBy = "accident")
-    private Set<Rule> rules = new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}
+    )
+    @JoinColumn(name = "accident_id")
+    private Set<Rule> rules = new LinkedHashSet<>();
 
     public Accident() {
     }
@@ -74,6 +83,26 @@ public class Accident implements Serializable {
 
     public Set<Rule> getRules() {
         return new HashSet<>(rules);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setType(AccidentType type) {
+        this.type = type;
+    }
+
+    public void setRules(Collection<Rule> rules) {
+        this.rules.addAll(rules);
     }
 
     @Override

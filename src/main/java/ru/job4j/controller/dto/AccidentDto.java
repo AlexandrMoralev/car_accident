@@ -4,35 +4,45 @@ import ru.job4j.model.Accident;
 import ru.job4j.model.AccidentType;
 import ru.job4j.model.Rule;
 
+import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 
-public class AccidentDto {
+public class AccidentDto implements Serializable {
 
     private Integer id;
     private String name;
     private String text;
     private String address;
     private Integer typeId;
+    private String typeName;
     private Collection<Integer> ruleIds;
+    private String ruleNames;
+
+    public AccidentDto() {
+    }
 
     public AccidentDto(Integer id,
                        String name,
                        String text,
                        String address,
                        Integer typeId,
-                       Collection<Integer> ruleIds
+                       String typeName,
+                       Collection<Integer> ruleIds,
+                       String ruleNames
     ) {
         this.id = id;
         this.name = name;
         this.text = text;
         this.address = address;
         this.typeId = typeId;
+        this.typeName = typeName;
         this.ruleIds = ruleIds;
+        this.ruleNames = ruleNames;
     }
 
     public Integer getId() {
@@ -55,19 +65,63 @@ public class AccidentDto {
         return typeId;
     }
 
+    public String getTypeName() {
+        return typeName;
+    }
+
     public Collection<Integer> getRuleIds() {
         return ruleIds;
     }
 
-    public Accident toEntity(List<AccidentType> types, List<Rule> rules) {
+    public String getRuleNames() {
+        return ruleNames;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public void setRuleIds(Collection<Integer> ruleIds) {
+        this.ruleIds = ruleIds;
+    }
+
+    public void setRuleNames(String ruleNames) {
+        this.ruleNames = ruleNames;
+    }
+
+    public Accident toEntity(AccidentType type, Collection<Rule> rules) {
         Accident.Builder entity = Accident.newBuilder();
         ofNullable(this.id).ifPresent(entity::setId);
         ofNullable(this.name).ifPresent(entity::setName);
         ofNullable(this.text).ifPresent(entity::setText);
         ofNullable(this.address).ifPresent(entity::setAddress);
-        ofNullable(this.typeId).flatMap(id -> types.stream().filter(t -> id.equals(t.getId())).findFirst()).ifPresent(entity::setType);
+        ofNullable(type).ifPresent(entity::setType);
         entity.setRules(rules);
         return entity.build();
+    }
+
+    public Accident toEntity() {
+        return this.toEntity(null, Collections.emptyList());
     }
 
     public static AccidentDto fromEntity(Accident accident) {
@@ -76,8 +130,10 @@ public class AccidentDto {
                 accident.getName(),
                 accident.getText(),
                 accident.getAddress(),
-                accident.getType().getId(),
-                accident.getRules().stream().map(Rule::getId).collect(Collectors.toList())
+                ofNullable(accident.getType()).map(AccidentType::getId).orElse(null),
+                ofNullable(accident.getType()).map(AccidentType::getName).orElse(null),
+                accident.getRules().stream().map(Rule::getId).collect(Collectors.toList()),
+                accident.getRules().stream().map(Rule::getName).collect(Collectors.joining(", "))
         );
     }
 

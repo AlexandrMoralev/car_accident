@@ -1,5 +1,6 @@
 package ru.job4j.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,62 +8,75 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.job4j.controller.dto.AccidentDto;
+import ru.job4j.controller.dto.AccidentTypeDto;
+import ru.job4j.controller.dto.RuleDto;
 import ru.job4j.model.AccidentType;
 import ru.job4j.model.Rule;
 import ru.job4j.service.AccidentService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
+import static java.util.function.Predicate.not;
 
 @Controller
 public class AccidentController {
 
     private final AccidentService accidentService;
 
-    // TODO cache this
-    private final static List<AccidentType> ACCIDENT_TYPES = List.of(
-            AccidentType.of(1, "Две машины"),
-            AccidentType.of(2, "Машина и человек"),
-            AccidentType.of(3, "Машина и велосипед")
+    // TODO use cache
+    private final Map<Integer, AccidentTypeDto> accidentTypes = Map.of(
+            1, AccidentTypeDto.of(1, "Cars only"),
+            2, AccidentTypeDto.of(2, "Car and a human"),
+            3, AccidentTypeDto.of(3, "Car and a bicycle"),
+            4, AccidentTypeDto.of(4, "Other")
     );
 
-    private final static List<Rule> ACCIDENT_RULES = List.of(
-            Rule.of(1, "Статья. 1"),
-            Rule.of(2, "Статья. 2"),
-            Rule.of(3, "Статья. 3")
+    private final Map<Integer, RuleDto> rules = Map.of(
+            1, RuleDto.of(1, "Rule #1"),
+            2, RuleDto.of(2, "Rule #2"),
+            3, RuleDto.of(3, "Rule #3"),
+            4, RuleDto.of(4, "Rule #4"),
+            5, RuleDto.of(5, "Rule #5")
     );
 
-    private final static String[] EMPTY = new String[]{};
+    private final Supplier<Comparator<AccidentTypeDto>> accidentTypesComparator = () -> Comparator.comparing(AccidentTypeDto::getId);
+    private final Supplier<Comparator<RuleDto>> ruleComparator = () -> Comparator.comparing(RuleDto::getId);
 
-    public AccidentController(AccidentService accidentService) {
+    @Autowired
+    public AccidentController(AccidentService accidentService
+    ) {
         this.accidentService = accidentService;
     }
 
     @GetMapping("/create")
     public String create(Model model) {
-        model.addAttribute("types", ACCIDENT_TYPES);
-        model.addAttribute("rules", ACCIDENT_RULES);
+        model.addAttribute(
+                "types",
+                accidentTypes.values().stream().sorted(accidentTypesComparator.get()).collect(Collectors.toList())
+        );
+        model.addAttribute(
+                "rules",
+                rules.values().stream().sorted(ruleComparator.get()).collect(Collectors.toList())
+        );
         return "accident/create";
     }
 
     @PostMapping("/save")
     public String save(@ModelAttribute AccidentDto accident, HttpServletRequest req) {
-        String[] ids = ofNullable(req.getParameterValues("rIds")).orElse(EMPTY);
-        accidentService.saveAccident(accident.toEntity(ACCIDENT_TYPES, getRules(ids)));
+        Collection<Rule> selectedRules = getRules(req);
+        AccidentType accidentType = getAccidentType(accident.getTypeId());
+        accidentService.saveAccident(accident.toEntity(accidentType, selectedRules));
         return "redirect:/";
     }
 
     @GetMapping("/edit")
     public String getAccidentToUpdate(@RequestParam("id") int accidentId, Model model) {
-        accidentService.getAccident(accidentId).ifPresentOrElse(
-                acc -> {
-                    model.addAttribute("accident", acc);
-                    model.addAttribute("rIds", acc.getRules().stream().map(Rule::getId).collect(Collectors.toList()));
-                },
+        accidentService.getAccidentWithRules(accidentId).ifPresentOrElse(
+                acc -> model.addAttribute("accident", AccidentDto.fromEntity(acc)),
                 () -> model.addAttribute("error", "Accident not found.")
         );
         return "accident/edit";
@@ -70,30 +84,29 @@ public class AccidentController {
 
 
     @PostMapping("/edit")
-    public String edit(@ModelAttribute("accident") AccidentDto accident, HttpServletRequest req) {
-        String[] ids = getRuleIds(req);
-        accidentService.updateAccident(accident.toEntity(ACCIDENT_TYPES, getRules(ids)));
+    public String edit(@ModelAttribute("accident") AccidentDto accident) {
+        accidentService.updateAccident(accident.toEntity());
         return "redirect:/";
     }
 
-    // TODO cleanup while making accident rules updatable
-    private String[] getRuleIds(HttpServletRequest req) {
-        return ofNullable(req.getParameter("rIds"))
-                .map(s -> Arrays.stream(s.split(","))
+    private Collection<Rule> getRules(HttpServletRequest req) {
+        return ofNullable(req.getParameterValues("rIds"))
+                .stream()
+                .flatMap(v -> Arrays.stream(v)
                         .map(String::strip)
-                        .map(v -> v.replaceAll("\\[", "").replaceAll("\\]", ""))
-                        .collect(Collectors.toList())
-                        .toArray(new String[]{})
+                        .filter(not(String::isEmpty))
+                        .map(Integer::valueOf)
                 )
-                .orElse(EMPTY);
+                .map(rules::get)
+                .filter(Objects::nonNull)
+                .map(RuleDto::toEntity)
+                .collect(Collectors.toSet());
     }
 
-    private List<Rule> getRules(String[] ids) {
-        return Arrays.stream(ids)
-                .map(Integer::valueOf)
-                .filter(v -> v >= 0 && v < ACCIDENT_RULES.size())
-                .flatMap(id -> ACCIDENT_RULES.stream().filter(r -> id.equals(r.getId())).findFirst().stream())
-                .collect(Collectors.toList());
+    private AccidentType getAccidentType(Integer typeId) {
+        return ofNullable(accidentTypes.get(typeId))
+                .map(AccidentTypeDto::toEntity)
+                .orElse(null);
     }
 
 }

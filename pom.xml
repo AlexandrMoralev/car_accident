@@ -43,11 +43,24 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
+        <javax.version>11</javax.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <spring.version>5.2.7.RELEASE</spring.version>
+        <servlet-api.version>4.0.1</servlet-api.version>
+        <jstl.version>1.2</jstl.version>
+        <cglib.version>3.3.0</cglib.version>
+        <log4j.version>2.7</log4j.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <jackson.version>2.11.3</jackson.version>
+        <jackson-asl.version>1.9.13</jackson-asl.version>
+        <jackson-fasterxml.version>2.5.2</jackson-fasterxml.version>
         <liquibase.version>4.0.0</liquibase.version>
+        <hibernate.version>5.4.2.Final</hibernate.version>
+        <commons-dbcp2.version>2.7.0</commons-dbcp2.version>
         <liquibase-hibernate5.version>3.10.1</liquibase-hibernate5.version>
+        <postgresql.version>42.2.5</postgresql.version>
+        <junit.version>5.7.0-M1</junit.version>
         <jdbc.url>${db.url}/${car.accident.db.name}</jdbc.url>
         <jdbc.username>${db.username}</jdbc.username>
         <jdbc.password>${db.password}</jdbc.password>
@@ -55,58 +68,63 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-fxml -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>11</version>
+            <version>${javax.version}</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-graphics -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>11</version>
+            <version>${javax.version}</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-base -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>11</version>
+            <version>${javax.version}</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>11</version>
+            <version>${javax.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.14.0</version>
+            <version>${log4j.version}</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.14.0</version>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <!--<scope>compile</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <version>${jstl.version}</version>
         </dependency>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
+            <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -115,47 +133,72 @@
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>${cglib.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.4.2.Final</version>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
         </dependency>
 
         <dependency>
@@ -167,10 +210,9 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.5</version>
+            <version>${postgresql.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.junit/junit5-engine -->
         <dependency>
             <groupId>org.junit</groupId>
             <artifactId>junit5-engine</artifactId>
@@ -179,35 +221,32 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.0-M1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine -->
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>5.7.0-M1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.0-M1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>5.7.0-M1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
-            <version>2.7.0</version>
+            <version>${commons-dbcp2.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -332,6 +371,11 @@
                             <artifactId>liquibase-hibernate5</artifactId>
                             <version>${liquibase-hibernate5.version}</version>
                         </dependency>
+                        <!--<dependency>-->
+                            <!--<groupId>org.liquibase.ext</groupId>-->
+                            <!--<artifactId>liquibase-hibernate5</artifactId>-->
+                            <!--<version>4.2.2</version>-->
+                        <!--</dependency>-->
                     </dependencies>
                 </plugin>
 

@@ -11,7 +11,11 @@ public interface AccidentService {
 
     Collection<Accident> getAllAccidents();
 
+    Collection<Accident> getAllAccidentsWithRules();
+
     Optional<Accident> getAccident(Integer id);
+
+    Optional<Accident> getAccidentWithRules(Integer id);
 
     void updateAccident(Accident updatedAccident);
 

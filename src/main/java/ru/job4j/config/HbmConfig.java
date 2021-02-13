@@ -4,6 +4,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -17,6 +18,7 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:car_accident_app.properties")
+@ComponentScan("ru.job4j.repository")
 @EnableTransactionManagement
 public class HbmConfig {
 
@@ -51,7 +53,7 @@ public class HbmConfig {
         cfg.setProperty("hibernate.dialect", dialect);
         cfg.setProperty("show_sql", "true");
         cfg.setProperty("format_sql", "true");
-        cfg.setProperty("hbm2ddl.auto", "update");
+        cfg.setProperty("hbm2ddl.auto", "validate");
         sessionFactory.setHibernateProperties(cfg);
         return sessionFactory;
     }

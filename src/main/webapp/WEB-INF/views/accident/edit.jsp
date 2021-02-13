@@ -31,12 +31,6 @@
             <input type="hidden" class="form-control" name="id" value="${accident.id}">
         </div>
         <div class="form-group">
-            <input type="hidden" class="form-control" name="typeId" value="${accident.type.id}">
-        </div>
-        <div class="form-group">
-            <input type="hidden" class="form-control" name="rIds" value="${rIds}">
-        </div>
-        <div class="form-group">
             <label>Название:</label>
             <input type="text" class="form-control" name="name" value="${accident.name}">
         </div>

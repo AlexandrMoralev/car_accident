@@ -40,12 +40,8 @@
             <tr>
                 <td><a href="<c:url value='/edit?id=${accident.id}'/>"
                        title="Редактировать инцидент">${accident.name}</a></td>
-                <td>${accident.type.name}</td>
-                <td>
-                    <c:forEach var="rule" items="${accident.rules}">
-                        <c:out value="${rule.name}"/><br>
-                    </c:forEach>
-                </td>
+                <td>${accident.typeName}</td>
+                <td>${accident.ruleNames}</td>
                 <td>${accident.text}</td>
                 <td>${accident.address}</td>
             </tr>
