@@ -30,7 +30,7 @@ public class LoginController {
         return "accident/login";
     }
 
-    @RequestMapping(value = "/logout") // TODO add logout
+    @RequestMapping(value = "/logout")
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {

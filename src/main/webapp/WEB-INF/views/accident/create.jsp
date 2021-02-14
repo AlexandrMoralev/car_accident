@@ -17,7 +17,26 @@
 <div class="container">
 
     <h2>Save accident</h2>
-
+    <br>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand navbar-light bg-faded">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/car_accident/">Accidents <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="/car_accident/create">Add accident</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/car_accident/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <br>
     <form action="<c:url value='/save'/>" method='POST'>
         <div class="form-group">
             <label>Название:</label>
