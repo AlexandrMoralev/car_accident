@@ -20,6 +20,9 @@
 <div class="container">
     <h1>Accidents</h1>
     <br>
+    <div class="float-right badge badge-secondary">
+        Login as : ${user.username}
+    </div>
     <div class="container-fluid">
         <nav class="navbar navbar-expand navbar-light bg-faded">
             <a class="navbar-brand" href="#">Navbar</a>

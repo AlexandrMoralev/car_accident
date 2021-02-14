@@ -82,7 +82,6 @@ public class AccidentController {
         return "accident/edit";
     }
 
-
     @PostMapping("/edit")
     public String edit(@ModelAttribute("accident") AccidentDto accident) {
         accidentService.updateAccident(accident.toEntity());

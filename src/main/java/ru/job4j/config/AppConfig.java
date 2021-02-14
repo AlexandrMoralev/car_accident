@@ -1,8 +1,6 @@
 package ru.job4j.config;
 
 import liquibase.integration.spring.SpringLiquibase;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import ru.job4j.repository.accident.AccidentMem;
@@ -47,6 +45,11 @@ public class AppConfig {
     @Bean
     public AccidentTypeService accidentTypeService(AccidentTypeStore accidentTypeHibernate) {
         return new AccidentTypeServiceImpl(accidentTypeHibernate);
+    }
+
+    @Bean
+    public AccidentService accidentService(AccidentStore accidentHibernate) {
+        return new AccidentServiceImpl(accidentHibernate);
     }
 
 }
